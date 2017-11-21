@@ -1,0 +1,9 @@
+{
+  "Host": "127.0.0.1",
+  "Port": "3306",
+  "Encoding": "utf8",
+  "TimeZone": "Europe/Stockholm",
+  "Username": "zubat",
+  "Password": "zubat",
+  "Database": "zubat"
+}

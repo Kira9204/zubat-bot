@@ -1,0 +1,6 @@
+{
+  "Enabled": true,
+  "ShortenAbove": 50,
+  "ToBase": 36,
+  "BaseURL": "http://s.erikwelander.se/"
+}

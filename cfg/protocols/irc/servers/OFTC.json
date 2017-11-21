@@ -1,0 +1,13 @@
+﻿{
+  "host": "irc.oftc.net",
+  "port": 6667,
+  "channels": [
+    "#xxxxxxxx"
+  ],
+  "nickName": "Zubat",
+  "realName": "Zubat irc bot",
+  "reconnectDelay": 120,
+  "reconnectAttempts": 2,
+  "autoReconnect": true,
+  "autoNickChange": true
+}

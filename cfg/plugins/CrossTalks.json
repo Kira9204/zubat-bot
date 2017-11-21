@@ -1,0 +1,21 @@
+{
+  "Enabled": true,
+  "CrossTalks": [
+    {
+      "originProtocol": "irc",
+      "originServer": "irc.oftc.net",
+      "originChannel": "#snekabel",
+      "destinationProtocol": "mumble",
+      "destinationServer": "mumble.0x5e.se",
+      "destinationChannel": "mumble.0x5e.se"
+    },
+    {
+      "originProtocol": "mumble",
+      "originServer": "mumble.0x5e.se",
+      "originChannel": "mumble.0x5e.se",
+      "destinationProtocol": "irc",
+      "destinationServer": "irc.oftc.net",
+      "destinationChannel": "#snekabel"
+    }
+  ]
+}

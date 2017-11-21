@@ -1,0 +1,24 @@
+﻿{
+  "Trigger": "!",
+  "EnabledProtocols": [
+    "IRC"
+  ],
+  "CrossTalks": [
+    {
+      "originProtocol": "irc",
+      "originServer": "irc.oftc.net",
+      "originChannel": "#zubat-testing",
+      "destinationProtocol": "mumble",
+      "destinationServer": "127.0.0.1",
+      "destinationChannel": "root"
+    },
+    {
+      "originProtocol": "mumble",
+      "originServer": "127.0.0.1",
+      "originChannel": "root",
+      "destinationProtocol": "irc",
+      "destinationServer": "irc.oftc.net",
+      "destinationChannel": "#zubat-testing"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "Enabled": true,
+  "DisabledFor": [
+    {
+      "protocol": "irc",
+      "server": "irc.oftc.net",
+      "channels": [
+        "#ix"
+      ]
+    }
+  ]
+}

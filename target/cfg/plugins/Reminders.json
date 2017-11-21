@@ -1,0 +1,7 @@
+{
+  "Enabled": true,
+  "RefreshPoll": 10000,
+  "EnabledProtocols": [
+    "IRC"
+  ]
+}
