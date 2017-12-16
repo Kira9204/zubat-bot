@@ -222,12 +222,13 @@ public class WebPricesPlugin implements PluginInterface {
                 if (price.length() > 0 && timeLeft.length() > 0) {
                     timeLeft = timeLeft.replace("tim", "hours");
                     timeLeft = timeLeft.replace("min", "minutes");
-                    return title + ". Price: " + price + ". Auction ends in: " + timeLeft;
+                    timeLeft = timeLeft.replace("dagar", "days");
+                    return title + ". Highest bidding: " + price + " SEK. Auction ends in: " + timeLeft;
                 } else if (price.length() > 0) {
-                    return title + ". Price: " + price;
+                    return title + ". Price: " + price+" SEK";
                 }
             } else if (metaPriceElements.size() > 0) {
-                return title + ". Price: " + price;
+                return title + ". Price: " + price+" SEK";
             }
             return title;
         } else if (domain.equals("www.sfbok.se")) {

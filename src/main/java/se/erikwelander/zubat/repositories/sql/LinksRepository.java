@@ -13,17 +13,17 @@ import java.util.List;
 
 public class LinksRepository {
 
-    public LinksRepository() {
-    }
+    private SQLConnector sqlConnector;
 
-    public int addLink(LinkModel model) throws LinksRepositoryException {
-
-        SQLConnector sqlConnector;
+    public LinksRepository() throws LinksRepositoryException {
         try {
             sqlConnector = new SQLConnector();
         } catch (SQLConnectorException ex) {
             throw new LinksRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
         }
+    }
+
+    public int addLink(LinkModel model) throws LinksRepositoryException {
 
         try {
             StringBuilder builder = new StringBuilder();
@@ -34,7 +34,6 @@ public class LinksRepository {
             statement.setString(1, model.getUrl());
 
             int newKey = sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
 
             return newKey;
         } catch (SQLException | SQLConnectorException ex) {
@@ -43,13 +42,6 @@ public class LinksRepository {
     }
 
     public List<LinkModel> getRandomLinks(final int numLinks) throws LinksRepositoryException {
-
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new LinksRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
 
         try {
             String sql = "SELECT link_id, link_url FROM links_bored ORDER BY RAND() LIMIT " + numLinks + ";";
@@ -63,7 +55,6 @@ public class LinksRepository {
                 models.add(model);
             }
 
-            sqlConnector.disconnect();
             return models;
 
         } catch (SQLException | SQLConnectorException ex) {
@@ -73,19 +64,11 @@ public class LinksRepository {
 
     public void removeLink(final int ID) throws LinksRepositoryException {
 
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new LinksRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
-
         try {
             String sql = "DELETE FROM links_bored WHERE link_id = ?;";
             PreparedStatement statement = sqlConnector.prepareStatement(sql);
             statement.setInt(1, ID);
             sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
         } catch (SQLException | SQLConnectorException ex) {
             throw new LinksRepositoryException(this.getClass().getName() + "Failed to delete model! Cause: " + ex.getMessage(), ex);
         }
@@ -93,18 +76,10 @@ public class LinksRepository {
 
     public void removeLast() throws LinksRepositoryException {
 
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new LinksRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
-
         try {
             String sql = "DELETE FROM links_bored ORDER BY link_id DESC LIMIT 1;";
             PreparedStatement statement = sqlConnector.prepareStatement(sql);
             sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
         } catch (SQLConnectorException ex) {
             throw new LinksRepositoryException(this.getClass().getName() + "Failed to delete model! Cause: " + ex.getMessage(), ex);
         }

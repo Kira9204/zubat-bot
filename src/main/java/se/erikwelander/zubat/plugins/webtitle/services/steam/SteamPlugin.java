@@ -49,6 +49,7 @@ public class SteamPlugin implements PluginInterface {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {

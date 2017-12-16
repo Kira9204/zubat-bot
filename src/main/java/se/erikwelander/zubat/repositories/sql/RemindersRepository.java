@@ -16,17 +16,17 @@ public class RemindersRepository {
     public static final int REMINDER_TYPE_ON_TIMESTAMP = 1;
     public static final int REMINDER_TYPE_ON_JOIN = 2;
 
-    public RemindersRepository() {
-    }
+    private SQLConnector sqlConnector;
 
-    public int addReminder(ReminderModel model) throws RemindersRepositoryException {
-
-        SQLConnector sqlConnector;
+    public RemindersRepository() throws RemindersRepositoryException {
         try {
             sqlConnector = new SQLConnector();
         } catch (SQLConnectorException ex) {
             throw new RemindersRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
         }
+    }
+
+    public int addReminder(ReminderModel model) throws RemindersRepositoryException {
 
         try {
             StringBuilder builder = new StringBuilder();
@@ -45,7 +45,6 @@ public class RemindersRepository {
             statement.setString(8, model.getChannel());
 
             int insertID = sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
 
             return insertID;
         } catch (SQLException | SQLConnectorException ex) {
@@ -54,13 +53,6 @@ public class RemindersRepository {
     }
 
     public ReminderModel getReminderWithID(final int id) throws RemindersRepositoryException {
-
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new RemindersRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
 
         try {
             String sql = "SELECT * FROM reminders WHERE reminder_id = ?;";
@@ -82,7 +74,6 @@ public class RemindersRepository {
                     result.getString("reminder_bot_server"),
                     result.getString("reminder_bot_channel"));
 
-            sqlConnector.disconnect();
             return model;
         } catch (SQLException | SQLConnectorException ex) {
             throw new RemindersRepositoryException(this.getClass().getName() + "Failed to insert model! Cause: " + ex.getMessage(), ex);
@@ -90,13 +81,6 @@ public class RemindersRepository {
     }
 
     public List<ReminderModel> getReminders() throws RemindersRepositoryException {
-
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new RemindersRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
 
         try {
             String sql = "SELECT * FROM reminders;";
@@ -118,7 +102,6 @@ public class RemindersRepository {
                 models.add(model);
             }
 
-            sqlConnector.disconnect();
             return models;
         } catch (SQLException | SQLConnectorException ex) {
             throw new RemindersRepositoryException(this.getClass().getName() + "Failed to insert model! Cause: " + ex.getMessage(), ex);
@@ -127,19 +110,11 @@ public class RemindersRepository {
 
     public void deleteReminder(final int ID) throws RemindersRepositoryException {
 
-        SQLConnector sqlConnector;
-        try {
-            sqlConnector = new SQLConnector();
-        } catch (SQLConnectorException ex) {
-            throw new RemindersRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
-        }
-
         try {
             String sql = "DELETE FROM reminders WHERE reminder_id = ?;";
             PreparedStatement statement = sqlConnector.prepareStatement(sql);
             statement.setInt(1, ID);
             sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
         } catch (SQLException | SQLConnectorException ex) {
             throw new RemindersRepositoryException(this.getClass().getName() + "Failed to remove model! Cause: " + ex.getMessage(), ex);
         }

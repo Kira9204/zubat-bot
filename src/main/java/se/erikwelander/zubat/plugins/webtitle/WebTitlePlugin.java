@@ -59,6 +59,7 @@ public class WebTitlePlugin implements PluginInterface {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {
@@ -164,20 +165,6 @@ public class WebTitlePlugin implements PluginInterface {
             }
         }
 
-        /*
-        if(toSend.isEmpty()) {
-            for (String part : parts) {
-                if (ReggexLib.match(part, REGGEX_IS_VALID_URL)) {
-                    try {
-                        String shorten = linkShorterPlugin.shortenLink(part);
-                        toSend.add("Short: "+shorten);
-                    } catch (PluginException ex) {
-                    }
-                    break;
-                }
-            }
-        }
-        */
         return toSend;
     }
 

@@ -56,7 +56,7 @@ public class IRCService {
         if (!dir.isDirectory())
             throw new IRCServiceException("Could not load any configurations! The directory " + currentPath + " does not exist");
 
-        File[] dirFiles = dir.listFiles();
+        File[] dirFiles = dir.listFiles((d, name) -> name.endsWith(".json"));
         if (dirFiles.length == 0)
             throw new IRCServiceException("Could not load any configurations! The directory " + currentPath + " is empty!");
 
@@ -64,6 +64,7 @@ public class IRCService {
         Gson gson = new Gson();
         for (int i = 0; i < dirFiles.length; i++) {
             String json = null;
+            System.out.println("Loading file: "+dirFiles[i].getAbsoluteFile());
             try {
                 json = FileUtils.readFileToString(dirFiles[i].getAbsoluteFile(), "UTF8");
             } catch (IOException e) {

@@ -16,14 +16,19 @@ import java.util.Date;
 public class SQLConnector {
 
     private static SQLConnectorSettings dbInfo;
-    private Connection sqlConnection;
+    private static Connection sqlConnection;
     private Statement sqlStatement;
 
     public SQLConnector() throws SQLConnectorException {
         if (null == dbInfo) {
             dbInfo = loadModels();
         }
-        connect();
+
+        /*
+        if(!isValidConnection()) {
+            connect();
+        }
+        */
     }
 
     @Override
@@ -37,6 +42,20 @@ public class SQLConnector {
         }
     }
 
+
+
+    private boolean isValidConnection() {
+        try {
+            if (sqlConnection != null && !sqlConnection.isClosed() && sqlConnection.isValid(10)) {
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Could not verify connection state! Cause: "+e.getMessage());
+            return false;
+        }
+        return false;
+    }
+
     private SQLConnectorSettings loadModels() throws SQLConnectorException {
         String filePath = Globals.PATH_CFG_DATABASE + "db.json";
         File file = new File(filePath);
@@ -46,6 +65,7 @@ public class SQLConnector {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {
@@ -78,6 +98,10 @@ public class SQLConnector {
     }
 
     public final PreparedStatement prepareStatement(final String sqlQuery) throws SQLConnectorException {
+        if(!isValidConnection()) {
+            connect();
+        }
+
         try {
             final PreparedStatement preparedStatement = sqlConnection.prepareStatement(sqlQuery, Statement.RETURN_GENERATED_KEYS);
             return preparedStatement;

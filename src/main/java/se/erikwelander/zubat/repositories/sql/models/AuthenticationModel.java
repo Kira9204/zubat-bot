@@ -6,33 +6,28 @@ public class AuthenticationModel {
     private String protocol;
     private String server;
     private String channel;
-    private String nick;
     private String hostMask;
 
     public AuthenticationModel(int id,
                                String protocol,
                                String server,
                                String channel,
-                               String nick,
                                String hostMask) {
         this.id = id;
         this.protocol = protocol;
         this.server = server;
         this.channel = channel;
-        this.nick = nick;
         this.hostMask = hostMask;
     }
 
     public AuthenticationModel(String protocol,
                                String server,
                                String channel,
-                               String nick,
                                String hostMask) {
         this.id = -1;
         this.protocol = protocol;
         this.server = server;
         this.channel = channel;
-        this.nick = nick;
         this.hostMask = hostMask;
     }
 
@@ -69,15 +64,6 @@ public class AuthenticationModel {
 
     public AuthenticationModel setChannel(String channel) {
         this.channel = channel;
-        return this;
-    }
-
-    public String getNick() {
-        return nick;
-    }
-
-    public AuthenticationModel setNick(String nick) {
-        this.nick = nick;
         return this;
     }
 

@@ -3,14 +3,9 @@ package se.erikwelander.zubat.services.MainService;
 import com.google.gson.Gson;
 import org.apache.commons.io.FileUtils;
 import se.erikwelander.zubat.globals.Globals;
-import se.erikwelander.zubat.plugins.crosstalk.CrossTalk;
-import se.erikwelander.zubat.plugins.crosstalk.exceptions.CrossTalkException;
-import se.erikwelander.zubat.plugins.webtitle.WebTitlePlugin;
 import se.erikwelander.zubat.services.MainService.exceptions.MainServiceException;
 import se.erikwelander.zubat.services.MainService.models.MainServiceModel;
-import se.erikwelander.zubat.services.protocols.gtalk.GTalkService;
 import se.erikwelander.zubat.services.protocols.irc.IRCService;
-import se.erikwelander.zubat.services.protocols.mumble.MumbleService;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +17,6 @@ public class MainService {
         MainServiceModel serviceModel = loadServiceModels();
         Globals.TRIGGER = serviceModel.getTrigger();
         createServices(serviceModel.getEnabledProtocols());
-        loadCrossTalks();
-        try {
-            new WebTitlePlugin();
-        } catch (Exception ex) {
-        }
-
         waitForExit();
     }
 
@@ -39,20 +28,6 @@ public class MainService {
                 case Globals.PROTOCOL_IRC:
                     try {
                         new IRCService();
-                    } catch (Exception ex) {
-                        System.err.println(ex);
-                    }
-                    break;
-                case Globals.PROTOCOL_MUMBLE:
-                    try {
-                        new MumbleService();
-                    } catch (Exception ex) {
-                        System.err.println(ex);
-                    }
-                    break;
-                case Globals.PROTOCOL_GTALK:
-                    try {
-                        new GTalkService();
                     } catch (Exception ex) {
                         System.err.println(ex);
                     }
@@ -69,6 +44,7 @@ public class MainService {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {
@@ -77,14 +53,6 @@ public class MainService {
 
         MainServiceModel model = gson.fromJson(json, MainServiceModel.class);
         return model;
-    }
-
-    private void loadCrossTalks() {
-        try {
-            CrossTalk.loadCrossTalks();
-        } catch (CrossTalkException ex) {
-            System.err.println(ex);
-        }
     }
 
     private void waitForExit() {

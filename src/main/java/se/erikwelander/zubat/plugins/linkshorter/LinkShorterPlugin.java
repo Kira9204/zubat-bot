@@ -9,6 +9,7 @@ import se.erikwelander.zubat.plugins.interfaces.PluginInterface;
 import se.erikwelander.zubat.plugins.linkshorter.models.LinkShorterConfigurationModel;
 import se.erikwelander.zubat.plugins.models.MessageEventModel;
 import se.erikwelander.zubat.repositories.sql.ShortLinksRepository;
+import se.erikwelander.zubat.repositories.sql.exceptions.LinksRepositoryException;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +25,11 @@ public class LinkShorterPlugin implements PluginInterface {
 
     public LinkShorterPlugin() throws PluginException {
         this.config = loadModels();
-        repository = new ShortLinksRepository();
+        try {
+            repository = new ShortLinksRepository();
+        } catch (LinksRepositoryException e) {
+            throw new PluginException("Could not construct repository! Cause: "+e.getMessage(), e);
+        }
     }
 
     private LinkShorterConfigurationModel loadModels() throws PluginException {
@@ -36,6 +41,7 @@ public class LinkShorterPlugin implements PluginInterface {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {

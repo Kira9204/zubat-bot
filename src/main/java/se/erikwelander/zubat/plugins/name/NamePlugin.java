@@ -1,9 +1,13 @@
 package se.erikwelander.zubat.plugins.name;
 
 import se.erikwelander.zubat.libs.ReggexLib;
+import se.erikwelander.zubat.plugins.exceptions.PluginException;
 import se.erikwelander.zubat.plugins.interfaces.PluginInterface;
 import se.erikwelander.zubat.plugins.models.MessageEventModel;
 import se.erikwelander.zubat.repositories.sql.NamesRepository;
+import se.erikwelander.zubat.repositories.sql.ShortLinksRepository;
+import se.erikwelander.zubat.repositories.sql.exceptions.LinksRepositoryException;
+import se.erikwelander.zubat.repositories.sql.exceptions.NamesRepositoryException;
 import se.erikwelander.zubat.repositories.sql.models.NameModel;
 
 import java.util.ArrayList;
@@ -19,7 +23,13 @@ public class NamePlugin implements PluginInterface {
     private static String REGGEX_NAME_SODA_MANY = "^" + TRIGGER + "name soda ([0-9]+)";
     private static String REGGEX_NAME_HELP = "^" + TRIGGER + "name help";
 
-    public NamePlugin() {
+    private NamesRepository repository;
+    public NamePlugin() throws PluginException {
+        try {
+            repository = new NamesRepository();
+        } catch (NamesRepositoryException e) {
+            throw new PluginException("Could not construct repository! Cause: "+e.getMessage(), e);
+        }
     }
 
 
@@ -54,8 +64,6 @@ public class NamePlugin implements PluginInterface {
                 }
             }
 
-            NamesRepository repository = new NamesRepository();
-
             List<String> names = new ArrayList<>();
             List<NameModel> models = new ArrayList<>();
             try {
@@ -79,7 +87,6 @@ public class NamePlugin implements PluginInterface {
                 }
             }
 
-            NamesRepository repository = new NamesRepository();
             List<String> names = new ArrayList<>();
             List<NameModel> models = new ArrayList<>();
             try {

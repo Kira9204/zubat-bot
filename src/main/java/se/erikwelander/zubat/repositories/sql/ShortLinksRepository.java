@@ -9,17 +9,17 @@ import java.sql.SQLException;
 
 public class ShortLinksRepository {
 
-    public ShortLinksRepository() {
-    }
+    private SQLConnector sqlConnector;
 
-    public int addLink(final String link) throws LinksRepositoryException {
-
-        SQLConnector sqlConnector;
+    public ShortLinksRepository() throws LinksRepositoryException {
         try {
             sqlConnector = new SQLConnector();
         } catch (SQLConnectorException ex) {
             throw new LinksRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
         }
+    }
+
+    public int addLink(final String link) throws LinksRepositoryException {
 
         try {
             StringBuilder builder = new StringBuilder();
@@ -30,7 +30,6 @@ public class ShortLinksRepository {
             statement.setString(1, link);
 
             int insertID = sqlConnector.queryUpdate(statement);
-            sqlConnector.disconnect();
             return insertID;
 
         } catch (SQLException | SQLConnectorException ex) {

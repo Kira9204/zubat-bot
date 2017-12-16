@@ -16,17 +16,17 @@ public class NamesRepository {
     public static final int NAME_POKEMON = 1;
     public static final int NAME_SODA = 2;
 
-    public NamesRepository() {
-    }
+    private SQLConnector sqlConnector;
 
-    public List<NameModel> getRandomNamesOfType(final int nameType, final int numNames) throws NamesRepositoryException {
-
-        SQLConnector sqlConnector;
+    public NamesRepository() throws NamesRepositoryException {
         try {
             sqlConnector = new SQLConnector();
         } catch (SQLConnectorException ex) {
             throw new NamesRepositoryException(this.getClass().getName() + "Failed to establish database connection! Cause: " + ex.getMessage(), ex);
         }
+    }
+
+    public List<NameModel> getRandomNamesOfType(final int nameType, final int numNames) throws NamesRepositoryException {
 
         try {
             String tableName = "";
@@ -48,7 +48,6 @@ public class NamesRepository {
                 models.add(model);
             }
 
-            sqlConnector.disconnect();
             return models;
 
         } catch (SQLException | SQLConnectorException ex) {

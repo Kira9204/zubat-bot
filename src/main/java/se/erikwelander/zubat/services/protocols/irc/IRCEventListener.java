@@ -11,8 +11,6 @@ import org.pircbotx.hooks.events.JoinEvent;
 import org.pircbotx.hooks.events.MessageEvent;
 import se.erikwelander.zubat.globals.Globals;
 import se.erikwelander.zubat.plugins.bored.BoredLinksPlugin;
-import se.erikwelander.zubat.plugins.crosstalk.CrossTalk;
-import se.erikwelander.zubat.plugins.crosstalk.interfaces.CrossTalkProtocolInterface;
 import se.erikwelander.zubat.plugins.exceptions.PluginException;
 import se.erikwelander.zubat.plugins.info.InfoPlugin;
 import se.erikwelander.zubat.plugins.interfaces.PluginInterface;
@@ -24,8 +22,8 @@ import se.erikwelander.zubat.plugins.reminder.models.RemindersConfigModel;
 import se.erikwelander.zubat.plugins.requestAuth.RequestAuth;
 import se.erikwelander.zubat.plugins.webtitle.WebTitlePlugin;
 import se.erikwelander.zubat.repositories.sql.RemindersRepository;
+import se.erikwelander.zubat.repositories.sql.exceptions.AuthenticationRepositoryException;
 import se.erikwelander.zubat.services.protocols.irc.models.IRCConnectionModel;
-import se.erikwelander.zubat.services.protocols.mumble.MumbleEventHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class IRCEventListener extends ListenerAdapter implements CrossTalkProtocolInterface, Runnable {
+public class IRCEventListener extends ListenerAdapter implements Runnable {
 
     private final int botID;
     private IRCConnectionModel connectionModel;
@@ -47,7 +45,11 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
         this.connectionModel = connectionModel;
         this.botID = botID;
 
-        requestAuth = new RequestAuth();
+        try {
+            requestAuth = new RequestAuth();
+        } catch (AuthenticationRepositoryException ex) {
+            System.err.println("Failed to load plugin: RequestAuth. Cause: " + ex.getMessage());
+        }
         try {
             this.reminderPlugin = new ReminderPlugin();
         } catch (PluginException ex) {
@@ -67,11 +69,16 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
         }
         try {
             this.linkShorterPlugin = new LinkShorterPlugin();
-        } catch (Exception ex) {
+        } catch (PluginException ex) {
             System.err.println("Failed to load plugin: urlShorterPlugin. Cause: " + ex.getMessage());
         }
+        try {
+            plugins.add(new NamePlugin());
+        } catch (PluginException ex) {
+            System.err.println("Failed to load plugin: NamePlugin. Cause: " + ex.getMessage());
+        }
+
         plugins.add(new InfoPlugin());
-        plugins.add(new NamePlugin());
         plugins.add(this.reminderPlugin);
 
         startReminderThreadIfEnabled();
@@ -94,6 +101,7 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {
@@ -159,13 +167,6 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
                 message
         );
 
-        /*
-        try {
-            triggerCrossTalk(messageEventModel, botID, event.getUser().getNick());
-        } catch (Exception ex) {
-
-        }
-        */
         List<String> shortURL = linkShorterPlugin.trigger(messageEventModel);
         if (!shortURL.isEmpty()) {
             event.getChannel().send().message("Short URL: " + shortURL.get(0));
@@ -306,9 +307,6 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
             } else {
                 event.getChannel().send().message(messageEventModel.getUser() + " failed to authenticate with me.");
             }
-        } else if (event.getMessage().equals(Globals.TRIGGER + "mumble")) {
-            String connectedUsers = MumbleEventHandler.getConnectedUsers();
-            event.getChannel().send().message("Connected users: " + connectedUsers);
         }
     }
 
@@ -319,14 +317,6 @@ public class IRCEventListener extends ListenerAdapter implements CrossTalkProtoc
         PircBotX botInstance = IRCService.getBot(botID);
         botInstance.send().joinChannel(channel);
         botInstance.send().message(channel, "Hello! " + user + " invited me here.");
-    }
-
-    @Override
-    public void triggerCrossTalk(MessageEventModel messageEventModel, Object session, Object user) {
-        Object[] object = new Object[2];
-        object[0] = session;
-        object[1] = user;
-        CrossTalk.trigger(messageEventModel, object);
     }
 
     @Override

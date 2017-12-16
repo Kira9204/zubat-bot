@@ -32,10 +32,16 @@ public class BoredLinksPlugin implements PluginInterface {
     private static final String REGGEX_IS_VALID_URL = "https?:\\/\\/(www\\.)?[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)";
     private static BoredLinksPluginConfig config;
     private WebTitlePlugin webTitlePlugin;
+    LinksRepository repository;
 
     public BoredLinksPlugin() throws PluginException {
         this.config = loadModels();
         webTitlePlugin = new WebTitlePlugin();
+        try {
+            repository = new LinksRepository();
+        } catch (LinksRepositoryException e) {
+            throw new PluginException("Could not construct repository! Cause: "+e.getMessage(), e);
+        }
     }
 
 
@@ -48,6 +54,7 @@ public class BoredLinksPlugin implements PluginInterface {
 
         Gson gson = new Gson();
         String json = "";
+        System.out.println("Loading file: "+file.getAbsoluteFile());
         try {
             json = FileUtils.readFileToString(file.getAbsoluteFile(), "UTF8");
         } catch (IOException ex) {
@@ -84,8 +91,6 @@ public class BoredLinksPlugin implements PluginInterface {
             //toSend.add("Disabled for this channel");
             return toSend;
         }
-
-        LinksRepository repository = new LinksRepository();
 
         String message = messageEventModel.getMessage();
         if (ReggexLib.match(message, REGGEX_CONTAINS_URL)) {

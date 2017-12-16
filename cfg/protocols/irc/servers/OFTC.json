@@ -2,9 +2,9 @@
   "host": "irc.oftc.net",
   "port": 6667,
   "channels": [
-    "#xxxxxxxx"
+    "#zubat-testing2"
   ],
-  "nickName": "Zubat",
+  "nickName": "Zubat2",
   "realName": "Zubat irc bot",
   "reconnectDelay": 120,
   "reconnectAttempts": 2,

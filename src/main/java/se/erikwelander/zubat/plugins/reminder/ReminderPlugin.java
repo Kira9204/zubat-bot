@@ -4,7 +4,9 @@ import se.erikwelander.zubat.libs.ReggexLib;
 import se.erikwelander.zubat.plugins.exceptions.PluginException;
 import se.erikwelander.zubat.plugins.interfaces.PluginInterface;
 import se.erikwelander.zubat.plugins.models.MessageEventModel;
+import se.erikwelander.zubat.repositories.sql.NamesRepository;
 import se.erikwelander.zubat.repositories.sql.RemindersRepository;
+import se.erikwelander.zubat.repositories.sql.exceptions.NamesRepositoryException;
 import se.erikwelander.zubat.repositories.sql.exceptions.RemindersRepositoryException;
 import se.erikwelander.zubat.repositories.sql.models.ReminderModel;
 
@@ -21,16 +23,21 @@ public class ReminderPlugin implements PluginInterface {
     private static final String REGGEX_REMIND_DELETE_ID = "^" + TRIGGER + "remind delete (\\d+)";
     private static final String REGGEX_REMIND_HELP = "^" + TRIGGER + "remind help";
     private static Map<Integer, ReminderModel> reminderModelMap = new HashMap<>();
-
+    private RemindersRepository repository;
 
     public ReminderPlugin() throws PluginException {
+        try {
+            repository = new RemindersRepository();
+        } catch (RemindersRepositoryException e) {
+            throw new PluginException("Could not construct repository! Cause: "+e.getMessage(), e);
+        }
+
         reminderModelMap = loadReminders();
     }
 
     private Map<Integer, ReminderModel> loadReminders() throws PluginException {
 
         try {
-            RemindersRepository repository = new RemindersRepository();
             List<ReminderModel> models = repository.getReminders();
             Map<Integer, ReminderModel> maps = new HashMap<>();
             for (ReminderModel model : models) {
@@ -59,8 +66,6 @@ public class ReminderPlugin implements PluginInterface {
                     if (reminderModel.getType() == ofType &&
                             reminderModel.getType() == RemindersRepository.REMINDER_TYPE_ON_JOIN) {
 
-                        RemindersRepository repository = new RemindersRepository();
-
                         repository.deleteReminder(key);
                         this.reminderModelMap.remove(key);
 
@@ -73,13 +78,11 @@ public class ReminderPlugin implements PluginInterface {
                             reminderModel.getType() == RemindersRepository.REMINDER_TYPE_ON_TIMESTAMP &&
                             reminderModel.getDate().before(currentDate)) {
 
-                        RemindersRepository repository = new RemindersRepository();
-
                         repository.deleteReminder(key);
                         this.reminderModelMap.remove(key);
 
                         StringBuilder builder = new StringBuilder();
-                        builder.append(reminderModel.getToUser() + ": This is an automatic timed reminder from " + reminderModel.getFromUser() + ": ");
+                        builder.append("This is an automatic timed reminder from " + reminderModel.getFromUser() + ": ");
                         builder.append("\"" + reminderModel.getText() + "\"");
                         toSend.add(builder.toString());
                     }
@@ -124,7 +127,6 @@ public class ReminderPlugin implements PluginInterface {
                 return toSend;
             }
 
-            RemindersRepository repository = new RemindersRepository();
             ReminderModel reminderModel = new ReminderModel(
                     repository.REMINDER_TYPE_ON_JOIN,
                     new Date(System.currentTimeMillis()),
@@ -156,7 +158,6 @@ public class ReminderPlugin implements PluginInterface {
                 return toSend;
             }
 
-            RemindersRepository repository = new RemindersRepository();
             int insertID = 0;
             try {
                 ReminderModel reminderModel = new ReminderModel(
@@ -195,7 +196,6 @@ public class ReminderPlugin implements PluginInterface {
             }
 
             try {
-                RemindersRepository repository = new RemindersRepository();
                 ReminderModel reminderModel = repository.getReminderWithID(reminderID);
 
                 if (null == reminderModel) {

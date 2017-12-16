@@ -13,7 +13,7 @@ import java.net.URI;
 import static se.erikwelander.zubat.globals.Globals.REGGEX_IS_VALID_URL;
 
 public class WebService {
-    private static final int TIMEOUT = 1000;
+    private static final int TIMEOUT = 10000;
     private static String userAgent;
 
     public WebService() {

@@ -35,12 +35,12 @@ public class InfoPlugin implements PluginInterface {
 
         if (message.equals(TRIGGER + "help") || message.equals(TRIGGER + "about")) {
             lines.add(messageEventModel.getUser() + ": Hello! I am Zubat, a multi-protocol \"modular\" chat bot by Erik Welander (Kira). Version: " + Globals.VERSION);
-            lines.add("Available functions include: metadata generation from lot web sites (youtube info, vimeo, steam, trading, pricing etc), Automatic/manual link shortning, cross-talk between protocols and channels, reminders on join/date, automatic operator authentication, name suggestions and probably more!");
+            lines.add("Available functions include: metadata generation from lot web sites (youtube info, vimeo, steam, trading, pricing etc), Automatic/manual link shortening, reminders on join/date, automatic operator authentication, name suggestions, fortunes and probably more!");
             lines.add("See " + TRIGGER + "commands to view a list of available runtime commands");
         } else if (message.equals(TRIGGER + "version")) {
             lines.add("Zubat version: " + Globals.VERSION);
         } else if (message.equals(TRIGGER + "commands")) {
-            lines.add(TRIGGER + "short <url>. " + TRIGGER + "op/deop [all] - Authentication. Can be set for personal use or for everyone in the channel. " + TRIGGER + "notifyall - Notifies everyone in a channel. " + TRIGGER + "nick - changes the bot nick. " + TRIGGER + "leave - Leaves the channel. " + TRIGGER + "name <pokemon/soda> [<num>]. " + TRIGGER + "remind join <user> <message>. " + TRIGGER + "remind date <yyyy-MM-dd HH:mm:ss> <message>. " + TRIGGER + "remind delete <num> - Deactivates a reminder with an existing ID. " + TRIGGER + "mumble. " + TRIGGER + "bored <[<num>]. " + TRIGGER + "bored remove <num>. " + TRIGGER + "bored remove last. Notice: Not all of these commands are implemented in all of the protocols supported.");
+            lines.add(TRIGGER + "short <url>. " + TRIGGER + "op/deop [all] - Authentication. Can be set for personal use or for everyone in the channel. " + TRIGGER + "notifyall - Notifies everyone in a channel. " + TRIGGER + "nick - changes the bot nick. " + TRIGGER + "leave - Leaves the channel. " + TRIGGER + "name <pokemon/soda> [<num>]. " + TRIGGER + "remind join <user> <message>. " + TRIGGER + "remind date <yyyy-MM-dd HH:mm:ss> <message>. " + TRIGGER + "remind delete <num> - Deactivates a reminder with an existing ID. " + TRIGGER + "bored <[<num>]. " + TRIGGER + "bored remove <num>. " + TRIGGER + "bored remove last. " + TRIGGER + "fortune.");
         }
         return lines;
     }
