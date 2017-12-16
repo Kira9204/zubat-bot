@@ -12,6 +12,7 @@ import org.pircbotx.hooks.events.MessageEvent;
 import se.erikwelander.zubat.globals.Globals;
 import se.erikwelander.zubat.plugins.bored.BoredLinksPlugin;
 import se.erikwelander.zubat.plugins.exceptions.PluginException;
+import se.erikwelander.zubat.plugins.fortune.FortunePlugin;
 import se.erikwelander.zubat.plugins.info.InfoPlugin;
 import se.erikwelander.zubat.plugins.interfaces.PluginInterface;
 import se.erikwelander.zubat.plugins.linkshorter.LinkShorterPlugin;
@@ -79,6 +80,7 @@ public class IRCEventListener extends ListenerAdapter implements Runnable {
         }
 
         plugins.add(new InfoPlugin());
+        plugins.add(new FortunePlugin());
         plugins.add(this.reminderPlugin);
 
         startReminderThreadIfEnabled();
